@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Agendamentos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .bi-house-fill {
+            position: fixed;
+            top: 30px;
+            left: 20px;
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="bi bi-house-fill">Inicio</a>
+
+    <div class="container">
+        <h1 class="mt-4">Gestão de Agendamentos</h1>
+
+        <div id="meu-agendamento" class="mt-4">
+            <h2>Seu Agendamento</h2>
+            <div id="agendamento-usuario"></div>
+            <button class="btn btn-primary" id="novo-agendamento">Novo Agendamento 
+                <i class="bi bi-pencil-square"></i>
+            </button>
+        </div>
+
+        <!-- Modal para criar novo agendamento -->
+        <div class="modal" tabindex="-1" id="modal-agendamento">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Novo Agendamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-agendamento">
+                            <div class="mb-3">
+                                <label for="data" class="form-label">Data</label>
+                                <input type="date" class="form-control" id="data" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="horario" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="horario" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Confirmar Agendamento</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        const getUserId = () => {
+            const token = localStorage.getItem('token');
+            if (!token) return null;
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            return decodedToken.userId;
+        };
+
+        const token = localStorage.getItem('token');
+        const userId = getUserId();
+
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        const carregarMeuAgendamento = async () => {
+            try {
+                const response = await axios.get(`/api/user/agendamentomeu/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.data.length > 0) {
+                    const agendamento = response.data[0];
+                    const dataUTC = new Date(agendamento.data);
+                    const dataFormatada = dataUTC.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
+                    document.getElementById('agendamento-usuario').innerHTML = `
+                        <p><strong>Nome:</strong> ${agendamento.userId.nome}</p>
+                        <p><strong>Cpf:</strong> ${agendamento.userId.cpf}</p>
+                        <p><strong>Data:</strong> ${dataFormatada}</p>
+                        <p><strong>Horário:</strong> ${agendamento.horario}</p>
+                        <button class="btn btn-danger" onclick="excluirAgendamento('${agendamento._id}')">Cancelar</button>
+                    `;
+                    document.getElementById('novo-agendamento').style.display = 'none';
+                } else {
+                    document.getElementById('agendamento-usuario').innerHTML = `<p>Nenhum agendamento encontrado.</p>`;
+                    document.getElementById('novo-agendamento').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar agendamento:', error);
+            }
+        };
+
+        const criarAgendamento = async (data, horario) => {
+            try {
+
+                await axios.post(`/api/user/agendamentocriar/${userId}`, { data, horario }, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                alert('Agendamento realizado com sucesso');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modal-agendamento'));
+                modal.hide();
+                carregarMeuAgendamento();
+            } catch (error) {
+                console.error('Erro ao criar agendamento:', error);
+                if (error.response) {
+                    if (error.response.status === 400) {
+                        alert(error.response.data.message || 'Esse horário e data já estão ocupados.');
+                    } else {
+                        alert(error.response.data.message || 'Erro ao atualizar agendamento');
+                    }
+                } else {
+                    alert('Erro de conexão. Tente novamente.');
+                }
+            } finally {
+                botao.disabled = false;
+               }
+
+        };
+
+        const excluirAgendamento = async (id) => {
+            if (confirm("Tem certeza que deseja cancelar este agendamento?")) {
+                try {
+                    await axios.delete(`/api/user/agendamentodelete/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    alert('Agendamento excluído com sucesso');
+                    window.location.href = 'gestao_usuario.html';
+                } catch (error) {
+                    console.error('Erro ao excluir agendamento:', error);
+                    alert('Erro ao excluir agendamento');
+                }
+            }
+        };
+
+        document.getElementById('novo-agendamento').addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('modal-agendamento'));
+            modal.show();
+        });
+
+        document.getElementById('form-agendamento').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = document.getElementById('data').value;
+            const horario = document.getElementById('horario').value;
+            criarAgendamento(data, horario);
+        });
+
+        window.onload = () => {
+            carregarMeuAgendamento();
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
