@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bem-vindo</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .inicio {
+      display: flex;
+      align-items: center;
+      height: 100vh;
+      background-color: #58a1eb;
+      color: white;
+    }
+    .features {
+      padding: 3rem 0;
+    }
+    .feature-icon {
+      font-size: 3rem;
+      color: #007bff;
+    }
+    .img_index img {
+      width: 90%;  
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      float: right;
+    }  
+    .Ola{
+        font-size: 55px;
+        font-weight: bold;
+        
+    }  
+    .lead{
+        color: #000000;
+        font-weight: initial;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="inicio">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Texto do Hero -->
+        <div class="col-md-6">
+          <h1 class="Ola">Olá, Seja Bem vindo!</h1>
+          <p class="lead">Esta é uma aplicação voltada para a gestão de usuários.</p>
+          <p class="lead">Oferecendo funcionalidades de cadastro, login, agedamentos e administração de dados.</p>
+          <p class="lead">Clique em acessar, se não, faça já seu cadastro.</p>
+          <a href="login.html" class="btn btn-light btn-lg mt-3">Acessar</a>
+          <a href="cadastro.html" class="btn btn-light btn-lg mt-3">Cadastrar</a>
+          
+
+        </div>
+        
+        <!-- Imagem do inicio -->
+        <div class="col-md-6 text-center img_index">
+          <img src="img/login_index.png" alt="login_index">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de Recursos -->
+  <section class="features bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <h3>Cadastro de Usuários</h3>
+          <p>Permita que novos usuários se cadastrem na aplicação de forma rápida e segura.</p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-sign-in-alt"></i>
+          </div>
+          <h3>Login Seguro</h3>
+          <p>Autenticação segura para proteger os dados e o acesso aos recursos.</p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <h3>Gestão Administrativa</h3>
+          <p>Acesse a área de administração para gerenciar usuários e visualizar informações importantes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer class="text-center py-4">
+    <p>&copy; 2025 Sua Aplicação. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
+
