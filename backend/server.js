@@ -36,5 +36,5 @@ app.use('/api/user', userRoutes);
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 app.listen(PORT, () => {
-  console.log(Servidor rodando na porta ${PORT});
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
