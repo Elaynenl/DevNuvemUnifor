@@ -50,12 +50,12 @@
 
         const carregarAgendamento = async () => {
             try {
-                const response = await axios.get(/api/user/agendamentoparaeditar/${agendamentoId}, {
-                    headers: { 'Authorization': Bearer ${token} }
+                const response = await axios.get(`/api/user/agendamentoparaeditar/${agendamentoId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const agendamento = response.data;
-                document.getElementById('usuario-nome').textContent = Nome: ${agendamento.userId.nome};
-                document.getElementById('usuario-cpf').textContent = CPF: ${agendamento.userId.cpf};
+                document.getElementById('usuario-nome').textContent = `Nome: ${agendamento.userId.nome}`;
+                document.getElementById('usuario-cpf').textContent = `CPF: ${agendamento.userId.cpf}`;
                 
                 const dataUTC = new Date(agendamento.data);
                 const dataFormatada = dataUTC.toISOString().split('T')[0];
@@ -74,8 +74,8 @@
             const horario = document.getElementById('horario').value;
 
             try {
-                await axios.put(/api/user/agendamentoupdate/${agendamentoId}, { data, horario }, {
-                    headers: { 'Authorization': Bearer ${token} }
+                await axios.put(`/api/user/agendamentoupdate/${agendamentoId}`, { data, horario }, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 alert('Agendamento atualizado com sucesso');
                 window.location.href = 'gestao_admin.html';
