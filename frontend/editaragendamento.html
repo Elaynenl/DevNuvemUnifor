@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Agendamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="mt-4">Editar Agendamento</h1>
+
+        <div id="usuario-dados">
+            <h2>Dados do Usuário</h2>
+            <p id="usuario-nome"></p>
+            <p id="usuario-cpf"></p>
+        </div>
+
+        <div id="agendamento-form">
+            <h2>Agendamento</h2>
+            <form id="form-agendamento">
+                <div class="mb-3">
+                    <label for="data" class="form-label">Data</label>
+                    <input type="date" class="form-control" id="data" required>
+                </div>
+                <div class="mb-3">
+                    <label for="horario" class="form-label">Horário</label>
+                    <input type="time" class="form-control" id="horario" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Alterações
+                    <i class="bi bi-floppy2"></i>
+                </button>
+                <button id="btn-cancel" class="btn btn-danger">Cancelar
+                    <i class="bi bi-ban"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const agendamentoId = new URLSearchParams(window.location.search).get('id');
+        
+        if (!token) window.location.href = '/login.html';
+
+        const carregarAgendamento = async () => {
+            try {
+                const response = await axios.get(/api/user/agendamentoparaeditar/${agendamentoId}, {
+                    headers: { 'Authorization': Bearer ${token} }
+                });
+                const agendamento = response.data;
+                document.getElementById('usuario-nome').textContent = Nome: ${agendamento.userId.nome};
+                document.getElementById('usuario-cpf').textContent = CPF: ${agendamento.userId.cpf};
+                
+                const dataUTC = new Date(agendamento.data);
+                const dataFormatada = dataUTC.toISOString().split('T')[0];
+                
+                document.getElementById('data').value = dataFormatada; 
+                document.getElementById('horario').value = agendamento.horario;
+            } catch (error) {
+                console.error('Erro ao carregar agendamento:', error);
+            }
+        };
+
+        const atualizarAgendamento = async (event) => {
+            event.preventDefault();
+
+            const data = document.getElementById('data').value;
+            const horario = document.getElementById('horario').value;
+
+            try {
+                await axios.put(/api/user/agendamentoupdate/${agendamentoId}, { data, horario }, {
+                    headers: { 'Authorization': Bearer ${token} }
+                });
+                alert('Agendamento atualizado com sucesso');
+                window.location.href = 'gestao_admin.html';
+            } catch (error) {
+                console.error('Erro ao atualizar agendamento:', error);
+                if (error.response) {
+                    
+                    if (error.response.status === 400) {
+                        alert(error.response.data.message || 'Esse horário e data já estão ocupados.');
+                    } else {
+                        alert(error.response.data.message || 'Erro ao atualizar agendamento');
+                    }
+                } else {
+                    alert('Erro de conexão. Tente novamente.');
+                }
+            } finally {
+                botao.disabled = false; 
+               }
+            
+        };
+
+        document.getElementById('form-agendamento').addEventListener('submit', atualizarAgendamento);
+
+        window.onload = carregarAgendamento;
+
+        document.getElementById('btn-cancel').addEventListener('click', (event) => {
+            event.preventDefault(); 
+            window.location.href = 'gestao_admin.html'; 
+        });
+
+    </script>
+
+</body>
+
+</html>
